@@ -1,15 +1,15 @@
 import scala.collection.mutable.Set
 
-val sq0 = List(0, 1, 2, 9, 10, 11, 18, 19, 20);
-val hor0 = (0 to 8).toList;
-val vert0 = (0 to 8).map(x => x * 9).toList;
+def mset (s : scala.collection.immutable.Set[Int]) : Set[Int] = { return Set[Int]() ++ s; }
+val sq0 = Set(0, 1, 2, 9, 10, 11, 18, 19, 20);
+val hor0 = mset((0 to 8).toSet);
+val vert0 = mset((0 to 8).map(x => x * 9).toSet);
 
-def incr (s : List[Int], i : Int) : List[Int] = {
-   return s.map(x => x + i);
+def incr (s : Set[Int], i : Int) : Set[Int] = {
+   return s.map((x : Int) => x + i);
 }
 
-val squares = List(0, 3, 6, 27, 27+3, 27+6, 45, 45+3, 54+6)
-              .map(x => incr(sq0, x));
+val squares = List(0, 3, 6, 27, 27+3, 27+6, 45, 45+3, 54+6).map(x => incr(sq0, x));
 val hors = (0 to 8).map(x => incr(hor0, x * 9));
 val verts = (0 to 8).map(x => incr(vert0, x));
 
@@ -38,10 +38,10 @@ def elements (s : Set[Int]) : Set[Int] = {
 // for squares, hors, verts, the "active_" prefix is a bit misleading:
 // all squares, hors, verts are "active", and these are lists of the same
 // length as squares, etc., but they contain only active cells.
-var active_grid = (0 to 80).filter (i => grid(i).size > 1);
-var active_squares = squares.map(s => s intersect active_grid);
-var active_hors = hors.map(s => s intersect active_grid);
-var active_verts = verts.map(s => s intersect active_grid);
+var active_grid = (0 to 80).filter (i => grid(i).size > 1).toSet;
+var active_squares = squares.map(s => s intersect active_grid).toSet;
+var active_hors = hors.map(s => s intersect active_grid).toSet;
+var active_verts = verts.map(s => s intersect active_grid).toSet;
 
 def print_grid () = {
    for (i <- 0 to 8) {
@@ -54,15 +54,15 @@ def print_grid () = {
 print_grid();
 
 def filter_groups () = {
-   active_squares = squares.map(s => s intersect active_grid);
-   active_hors = hors.map(s => s intersect active_grid);
-   active_verts = verts.map(s => s intersect active_grid);
+   active_squares = squares.map(s => s intersect active_grid).toSet;
+   active_hors = hors.map(s => s intersect active_grid).toSet;
+   active_verts = verts.map(s => s intersect active_grid).toSet;
 }
 
 def rule1 () = {
    for (g <- active_squares ++ active_hors ++ active_verts) {
       for ((h_hat, i_hat) <- subsets(g)) {
-         varl h_elts = elements(h_hat);
+         var h_elts = elements(h_hat);
          if (h_elts.size == h_hat.size) {
             for (c <- i_hat) {
                grid(c) --= h_elts;
@@ -76,6 +76,6 @@ def rule1 () = {
    }
 }
 
-def subsets (s : Set[Int]) : Set[Set[Int]] = {
-   return Set[Set[Int]]();
+def subsets (s : Set[Int]) : Set[(Set[Int], Set[Int])] = {
+   return Set((Set[Int](), Set[Int]()));
 }
